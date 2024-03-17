@@ -1,4 +1,4 @@
--- Получаем игрока
+-- пипися
 local player = game.Players.LocalPlayer
 
 -- Создаем ScreenGui
@@ -81,22 +81,6 @@ autoClickButton.MouseButton1Click:Connect(function()
 	ToggleButtonState(autoClickButton, not autoClickButton.Text:find("ON"))
 end)
 
-autoClaimButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(autoClaimButton, not autoClaimButton.Text:find("ON"))
-end)
-
-autoSpinButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(autoSpinButton, not autoSpinButton.Text:find("ON"))
-end)
-
-autoRebirthButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(autoRebirthButton, not autoRebirthButton.Text:find("ON"))
-end)
-
-equipPetButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(equipPetButton, not equipPetButton.Text:find("ON"))
-end)
-
 local isAutoRespawnEnabled = false
 
 -- Изменяем функцию для переключения состояния автоматического повторения
@@ -126,9 +110,49 @@ end
 -- Теперь вызываем функцию AutoRespawn каждую секунду, если автоматическое повторение включено
 spawn(function()
 	while true do
-		wait(1)
+		wait(2)
 		AutoRespawn()
 	end
+end)
+
+local isAutoSpinEnabled = false
+
+-- Изменяем функцию для переключения состояния автоматического повторения
+autoSpinButton.MouseButton1Click:Connect(function()
+	isAutoSpinEnabled = not isAutoSpinEnabled
+	ToggleButtonState(autoSpinButton, isAutoSpinEnabled)
+end)
+
+-- Изменяем функцию AutoSpin так, чтобы она вызывалась только при включенном автоматическом повторении
+local function AutoSpin()
+	if isAutoSpinEnabled then
+		local args = {
+			[1] = {
+				[1] = game.ClientStorage.Client.Services.PersonalRemoteService,
+				[2] = "fec6f919-2d3c-4274-a40f-bf3e9cc1cbcf",
+				[3] = "0.07991774498696265",
+				[4] = "e6893e35-f0fe-4945-b807-17d5d4b785ab"
+			}
+		}
+
+		game:GetService("SolidModelContentProvider"):FindFirstChild("7e78c8b8-4fea-4c33-9e99-73df654b42d6"):InvokeServer(unpack(args))
+	end
+end
+
+-- Теперь вызываем функцию AutoSpin каждую секунду, если автоматическое повторение включено
+spawn(function()
+	while true do
+		wait(0.7)
+		AutoSpin()
+	end
+end)
+
+autoRebirthButton.MouseButton1Click:Connect(function()
+	ToggleButtonState(autoRebirthButton, not autoRebirthButton.Text:find("ON"))
+end)
+
+equipPetButton.MouseButton1Click:Connect(function()
+	ToggleButtonState(equipPetButton, not equipPetButton.Text:find("ON"))
 end)
 
 -- Функция для отслеживания перемещения меню
