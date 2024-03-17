@@ -1,4 +1,5 @@
--- пипися
+-- пи
+-- Получаем игрока
 local player = game.Players.LocalPlayer
 
 -- Создаем ScreenGui
@@ -81,72 +82,6 @@ autoClickButton.MouseButton1Click:Connect(function()
 	ToggleButtonState(autoClickButton, not autoClickButton.Text:find("ON"))
 end)
 
-local isAutoRespawnEnabled = false
-
--- Изменяем функцию для переключения состояния автоматического повторения
-autoClaimButton.MouseButton1Click:Connect(function()
-	isAutoRespawnEnabled = not isAutoRespawnEnabled
-	ToggleButtonState(autoClaimButton, isAutoRespawnEnabled)
-end)
-
--- Изменяем функцию AutoRespawn так, чтобы она вызывалась только при включенном автоматическом повторении
-local function AutoRespawn()
-	if isAutoRespawnEnabled then
-		local args = {
-			[1] = {
-				[1] = game.ClientStorage.Client.Services.PersonalRemoteService,
-				[2] = "40ade444-e34e-4639-a2a0-528e5abd7741",
-				[3] = "0.0964279149600799",
-				[4] = "78848bd5-f796-491b-b10f-b08be87ce447"
-			},
-			[2] = 1.00795292300063,
-			[3] = 4517.031773588387
-		}
-
-		game:GetService("HttpService"):FindFirstChild("b0620e0e-6303-4d17-9a86-da77f4259161"):FireServer(unpack(args))
-	end
-end
-
--- Теперь вызываем функцию AutoRespawn каждую секунду, если автоматическое повторение включено
-spawn(function()
-	while true do
-		wait(2)
-		AutoRespawn()
-	end
-end)
-
-local isAutoSpinEnabled = false
-
--- Изменяем функцию для переключения состояния автоматического повторения
-autoSpinButton.MouseButton1Click:Connect(function()
-	isAutoSpinEnabled = not isAutoSpinEnabled
-	ToggleButtonState(autoSpinButton, isAutoSpinEnabled)
-end)
-
--- Изменяем функцию AutoSpin так, чтобы она вызывалась только при включенном автоматическом повторении
-local function AutoSpin()
-	if isAutoSpinEnabled then
-		local args = {
-			[1] = {
-				[1] = game.ClientStorage.Client.Services.PersonalRemoteService,
-				[2] = "fec6f919-2d3c-4274-a40f-bf3e9cc1cbcf",
-				[3] = "0.07991774498696265",
-				[4] = "e6893e35-f0fe-4945-b807-17d5d4b785ab"
-			}
-		}
-
-		game:GetService("SolidModelContentProvider"):FindFirstChild("7e78c8b8-4fea-4c33-9e99-73df654b42d6"):InvokeServer(unpack(args))
-	end
-end
-
--- Теперь вызываем функцию AutoSpin каждую секунду, если автоматическое повторение включено
-spawn(function()
-	while true do
-		wait(0.7)
-		AutoSpin()
-	end
-end)
-
 autoRebirthButton.MouseButton1Click:Connect(function()
 	ToggleButtonState(autoRebirthButton, not autoRebirthButton.Text:find("ON"))
 end)
@@ -155,24 +90,106 @@ equipPetButton.MouseButton1Click:Connect(function()
 	ToggleButtonState(equipPetButton, not equipPetButton.Text:find("ON"))
 end)
 
--- Функция для отслеживания перемещения меню
-menuFrame.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		isDragging = true
-		dragStartPos = input.Position
-		startPos = menuFrame.Position
+-- Добавляем переменные для отслеживания состояния автоматического повторения
+local isAutoSpinEnabled = false
+local isEquipPetEnabled = false
+local isAutoClaimEnabled = false
+
+-- Функция для выполнения задачи при нажатии на кнопку AutoSpinButton
+local function AutoSpinTask()
+	local args = {
+		[1] = {
+			[1] = game.ClientStorage.Client.Services.PersonalRemoteService,
+			[2] = "fec6f919-2d3c-4274-a40f-bf3e9cc1cbcf",
+			[3] = "0.07991774498696265",
+			[4] = "e6893e35-f0fe-4945-b807-17d5d4b785ab"
+		}
+	}
+
+	game:GetService("SolidModelContentProvider"):FindFirstChild("7e78c8b8-4fea-4c33-9e99-73df654b42d6"):InvokeServer(unpack(args))
+end
+
+-- Функция для выполнения задачи при нажатии на кнопку EquipPetButton
+local function EquipPetTask()
+	local args = {
+		[1] = {
+			[1] = game.ClientStorage.Client.Services.PersonalRemoteService,
+			[2] = "fec6f919-2d3c-4274-a40f-bf3e9cc1cbcf",
+			[3] = "0.6429770620842193",
+			[4] = "f9caffdc-1d35-4455-8de9-b933c7f3d1c1"
+		}
+	}
+
+	game:GetService("SolidModelContentProvider"):FindFirstChild("7e78c8b8-4fea-4c33-9e99-73df654b42d6"):InvokeServer(unpack(args))
+end
+
+-- Функция для выполнения задачи при нажатии на кнопку AutoClaimButton
+local function AutoClaimTask()
+	local args = {
+		[1] = {
+			[1] = game.ClientStorage.Client.Services.PersonalRemoteService,
+			[2] = "fec6f919-2d3c-4274-a40f-bf3e9cc1cbcf",
+			[3] = "0.4870775659784108",
+			[4] = "41e572f6-3c31-4c20-974f-5e4266108d7f"
+		}
+	}
+
+	game:GetService("SolidModelContentProvider"):FindFirstChild("7e78c8b8-4fea-4c33-9e99-73df654b42d6"):InvokeServer(unpack(args))
+end
+
+-- Добавляем выполнение задачи AutoSpinTask каждые 2 секунды, если автоматическое выполнение включено
+local autoSpinTaskLoop = nil
+
+autoSpinButton.MouseButton1Click:Connect(function()
+	isAutoSpinEnabled = not isAutoSpinEnabled
+	ToggleButtonState(autoSpinButton, isAutoSpinEnabled)
+
+	if isAutoSpinEnabled then
+		autoSpinTaskLoop = game:GetService("RunService").Stepped:Connect(function()
+			wait(2)
+			AutoSpinTask()
+		end)
+	else
+		if autoSpinTaskLoop then
+			autoSpinTaskLoop:Disconnect()
+		end
 	end
 end)
 
-menuFrame.InputChanged:Connect(function(input)
-	if isDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-		local delta = input.Position - dragStartPos
-		menuFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+-- Добавляем выполнение задачи EquipPetTask каждые 2 секунды, если автоматическое выполнение включено
+local equipPetTaskLoop = nil
+
+equipPetButton.MouseButton1Click:Connect(function()
+	isEquipPetEnabled = not isEquipPetEnabled
+	ToggleButtonState(equipPetButton, isEquipPetEnabled)
+
+	if isEquipPetEnabled then
+		equipPetTaskLoop = game:GetService("RunService").Stepped:Connect(function()
+			wait(2)
+			EquipPetTask()
+		end)
+	else
+		if equipPetTaskLoop then
+			equipPetTaskLoop:Disconnect()
+		end
 	end
 end)
 
-menuFrame.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		isDragging = false
+-- Добавляем выполнение задачи AutoClaimTask каждые 2 секунды, если автоматическое выполнение включено
+local autoClaimTaskLoop = nil
+
+autoClaimButton.MouseButton1Click:Connect(function()
+	isAutoClaimEnabled = not isAutoClaimEnabled
+	ToggleButtonState(autoClaimButton, isAutoClaimEnabled)
+
+	if isAutoClaimEnabled then
+		autoClaimTaskLoop = game:GetService("RunService").Stepped:Connect(function()
+			wait(2)
+			AutoClaimTask()
+		end)
+	else
+		if autoClaimTaskLoop then
+			autoClaimTaskLoop:Disconnect()
+		end
 	end
 end)
