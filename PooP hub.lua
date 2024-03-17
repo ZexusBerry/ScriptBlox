@@ -1,6 +1,6 @@
 -- пи
 -- Получаем игрока
--- Получаем игрока
+-- Получаем игрок
 --yeeeee
 local player = game.Players.LocalPlayer
 
