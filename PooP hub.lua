@@ -1,3 +1,4 @@
+-- Получаем игрока
 local player = game.Players.LocalPlayer
 
 -- Создаем ScreenGui
@@ -7,13 +8,22 @@ screenGui.Parent = player.PlayerGui
 -- Создаем Frame для меню
 local menuFrame = Instance.new("Frame")
 menuFrame.Name = "ModernMenu"
-menuFrame.Size = UDim2.new(0.3, 0, 0.5, 0)
+menuFrame.Size = UDim2.new(0.3, 0, 0.55, 0)
 menuFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 menuFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 menuFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 menuFrame.BorderSizePixel = 0
 menuFrame.ClipsDescendants = true
+menuFrame.Active = true
 menuFrame.Parent = screenGui
+
+local isDragging = false
+local dragStartPos = nil
+local startPos = nil
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 10)
+uiCorner.Parent = menuFrame
 
 -- Создаем ScrollFrame для кнопок
 local scrollFrame = Instance.new("ScrollingFrame")
@@ -53,10 +63,10 @@ end
 
 -- Создаем кнопки внутри ScrollFrame
 local autoClickButton = CreateAnimatedButton("Auto Click: OFF", UDim2.new(0.5, 0, 0, 0))
-local autoClaimButton = CreateAnimatedButton("Auto Claim Present: OFF", UDim2.new(0.5, 0, 0.2, 0))
-local autoSpinButton = CreateAnimatedButton("Auto Spin: OFF", UDim2.new(0.5, 0, 0.4, 0))
-local autoRebirthButton = CreateAnimatedButton("Auto Rebirth: OFF", UDim2.new(0.5, 0, 0.6, 0))
-local equipPetButton = CreateAnimatedButton("Equip Best Pet", UDim2.new(0.5, 0, 0.8, 0))
+local autoClaimButton = CreateAnimatedButton("Auto Respawn: OFF", UDim2.new(0.5, 0, 0.2, 0))
+local autoSpinButton = CreateAnimatedButton("Auto Upgrate Sword: OFF", UDim2.new(0.5, 0, 0.4, 0))
+local autoRebirthButton = CreateAnimatedButton("Auto Upgrate Class: OFF", UDim2.new(0.5, 0, 0.6, 0))
+local equipPetButton = CreateAnimatedButton("Auto Updrate Shuriken: OFF", UDim2.new(0.5, 0, 0.8, 0))
 
 -- Обновляем высоту контента в ScrollFrame
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, equipPetButton.Position.Y.Offset + equipPetButton.Size.Y.Offset)
@@ -66,32 +76,9 @@ local function ToggleButtonState(button, newState)
 	button.Text = newState and button.Text:gsub("OFF", "ON") or button.Text:gsub("ON", "OFF")
 end
 
-local function AutoClaimReward()
-	while autoClaimButton.Text:find("ON") do
-		for i = 1, 12 do
-			local args = {
-				[1] = tostring(i)
-			}
-			game:GetService("ReplicatedStorage").Packages.Knit.Services.TimedRewardService.RE.onClaim:FireServer(unpack(args))
-			wait(0.4)
-		end
-	end
-end
-
-local autoClickEnabled = false
-local function AutoClick()
-	while autoClickEnabled do
-		game:GetService("ReplicatedStorage").Packages.Knit.Services.ToolService.RE.onClick:FireServer()
-		warn("OH YEEEES Clicked me ahh")
-		wait(0.3)
-	end
-end
-
 -- Связываем кнопки с функциями переключения
 autoClickButton.MouseButton1Click:Connect(function()
-	autoClickEnabled = not autoClickEnabled
-	ToggleButtonState(autoClickButton, autoClickEnabled)
-	AutoClick()
+	ToggleButtonState(autoClickButton, not autoClickButton.Text:find("ON"))
 end)
 
 autoClaimButton.MouseButton1Click:Connect(function()
@@ -106,8 +93,62 @@ autoRebirthButton.MouseButton1Click:Connect(function()
 	ToggleButtonState(autoRebirthButton, not autoRebirthButton.Text:find("ON"))
 end)
 
--- Пример обработчика события для кнопки Equip Best Pet
 equipPetButton.MouseButton1Click:Connect(function()
-	-- Здесь можно добавить код для экипировки лучшего питомца
-	print("Equipping best pet...")
+	ToggleButtonState(equipPetButton, not equipPetButton.Text:find("ON"))
+end)
+
+local isAutoRespawnEnabled = false
+
+-- Изменяем функцию для переключения состояния автоматического повторения
+autoClaimButton.MouseButton1Click:Connect(function()
+	isAutoRespawnEnabled = not isAutoRespawnEnabled
+	ToggleButtonState(autoClaimButton, isAutoRespawnEnabled)
+end)
+
+-- Изменяем функцию AutoRespawn так, чтобы она вызывалась только при включенном автоматическом повторении
+local function AutoRespawn()
+	if isAutoRespawnEnabled then
+		local args = {
+			[1] = {
+				[1] = game.ClientStorage.Client.Services.PersonalRemoteService,
+				[2] = "40ade444-e34e-4639-a2a0-528e5abd7741",
+				[3] = "0.0964279149600799",
+				[4] = "78848bd5-f796-491b-b10f-b08be87ce447"
+			},
+			[2] = 1.00795292300063,
+			[3] = 4517.031773588387
+		}
+
+		game:GetService("HttpService"):FindFirstChild("b0620e0e-6303-4d17-9a86-da77f4259161"):FireServer(unpack(args))
+	end
+end
+
+-- Теперь вызываем функцию AutoRespawn каждую секунду, если автоматическое повторение включено
+spawn(function()
+	while true do
+		wait(1)
+		AutoRespawn()
+	end
+end)
+
+-- Функция для отслеживания перемещения меню
+menuFrame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		isDragging = true
+		dragStartPos = input.Position
+		startPos = menuFrame.Position
+	end
+end)
+
+menuFrame.InputChanged:Connect(function(input)
+	if isDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStartPos
+		menuFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+menuFrame.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		isDragging = false
+	end
 end)
