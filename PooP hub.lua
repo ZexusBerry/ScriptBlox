@@ -1,7 +1,4 @@
--- пи
 -- Получаем игрока
--- Получаем игрок
---yeeeee
 local player = game.Players.LocalPlayer
 
 -- Создаем ScreenGui
