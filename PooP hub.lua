@@ -1,5 +1,6 @@
 -- пи
 -- Получаем игрока
+-- Получаем игрока
 local player = game.Players.LocalPlayer
 
 -- Создаем ScreenGui
@@ -80,6 +81,10 @@ end
 -- Связываем кнопки с функциями переключения
 autoClickButton.MouseButton1Click:Connect(function()
 	ToggleButtonState(autoClickButton, not autoClickButton.Text:find("ON"))
+end)
+
+autoSpinButton.MouseButton1Click:Connect(function()
+	ToggleButtonState(autoSpinButton, not autoSpinButton.Text:find("ON"))
 end)
 
 autoRebirthButton.MouseButton1Click:Connect(function()
