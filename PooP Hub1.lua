@@ -64,9 +64,9 @@ end
 -- Создаем кнопки внутри ScrollFrame
 local autoClickButton = CreateAnimatedButton("Auto Click: OFF", UDim2.new(0.5, 0, 0, 0))
 local autoClaimButton = CreateAnimatedButton("Auto Respawn: OFF", UDim2.new(0.5, 0, 0.2, 0))
-local autoSpinButton = CreateAnimatedButton("Auto Upgrate Sword: OFF", UDim2.new(0.5, 0, 0.4, 0))
-local autoRebirthButton = CreateAnimatedButton("Auto Upgrate Class: OFF", UDim2.new(0.5, 0, 0.6, 0))
-local equipPetButton = CreateAnimatedButton("Auto Updrate Shuriken: OFF", UDim2.new(0.5, 0, 0.8, 0))
+local autoSpinButton = CreateAnimatedButton("Auto Upgrade Sword: OFF", UDim2.new(0.5, 0, 0.4, 0))
+local autoRebirthButton = CreateAnimatedButton("Auto Upgrade Class: OFF", UDim2.new(0.5, 0, 0.6, 0))
+local equipPetButton = CreateAnimatedButton("Auto Upgrade Shuriken: OFF", UDim2.new(0.5, 0, 0.8, 0))
 
 -- Обновляем высоту контента в ScrollFrame
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, equipPetButton.Position.Y.Offset + equipPetButton.Size.Y.Offset)
@@ -92,11 +92,6 @@ end)
 equipPetButton.MouseButton1Click:Connect(function()
 	ToggleButtonState(equipPetButton, not equipPetButton.Text:find("ON"))
 end)
-
--- Добавляем переменные для отслеживания состояния автоматического повторения
-local isAutoSpinEnabled = false
-local isEquipPetEnabled = false
-local isAutoClaimEnabled = false
 
 -- Функция для выполнения задачи при нажатии на кнопку AutoSpinButton
 local function AutoSpinTask()
