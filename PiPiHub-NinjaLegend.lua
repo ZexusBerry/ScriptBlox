@@ -1467,14 +1467,16 @@ end
 ------Button and Other------
 local autoClickButton = CreateAnimatedButton("Auto Swinging Katana: OFF", UDim2.new(0.5, 0, 0.07, 0))
 local AutoUpgrateSwordButton = CreateAnimatedButton("Auto Upgrade Sword: OFF", UDim2.new(0.5, 0, 0.30, 0))
-local AutoUpgrateGeneticButton = CreateAnimatedButton("Auto Upgrade Genetic: OFF", UDim2.new(0.5, 0, 0.44, 0))
-local AutoUpgrateSkillsButton = CreateAnimatedButton("Auto Upgrade Skills: OFF", UDim2.new(0.5, 0, 0.58, 0))
-local AutoUpgrateShurikenButton = CreateAnimatedButton("Auto Upgrade Shuriken: OFF", UDim2.new(0.5, 0, 0.72, 0))
-local AutoSpammGroundButton = CreateAnimatedButton("Auto Spam GroundSlam: OFF", UDim2.new(0.5, 0, 0.88, 0))
-local AutoAcceptArenaButton = CreateAnimatedButton("Auto Accept Arena: OFF", UDim2.new(0.5, 0, 0.92, 0))
-local AutoUnlockIslandButton = CreateAnimatedButton("Unlock All Island", UDim2.new(0.5, 0, 1.14, 0))
-local AutoHuntEventButton = CreateAnimatedButton("Complete Hunt Event", UDim2.new(0.5, 0, 1.28, 0))
-local RedeemCodesButton = CreateAnimatedButton("Redeem all codes", UDim2.new(0.5, 0, 1.42, 0))
+local AutoSellButton = CreateAnimatedButton("Auto Sell: OFF", UDim2.new(0.5, 0, 0.44, 0))
+local AutoUpgrateGeneticButton = CreateAnimatedButton("Auto Upgrade Genetic: OFF", UDim2.new(0.5, 0, 0.58, 0))
+local AutoUpgrateSkillsButton = CreateAnimatedButton("Auto Upgrade Skills: OFF", UDim2.new(0.5, 0, 0.72, 0))
+local AutoUpgrateShurikenButton = CreateAnimatedButton("Auto Upgrade Shuriken: OFF", UDim2.new(0.5, 0, 0.88, 0))
+local AutoSpammGroundButton = CreateAnimatedButton("Auto Spam GroundSlam: OFF", UDim2.new(0.5, 0, 0.92, 0))
+local AutoAcceptArenaButton = CreateAnimatedButton("Auto Accept Arena: OFF", UDim2.new(0.5, 0, 1.14, 0))
+local AutoHoopButton = CreateAnimatedButton("Open All Chests", UDim2.new(0.5, 0, 1.28, 0))
+local AutoUnlockIslandButton = CreateAnimatedButton("Unlock All Island", UDim2.new(0.5, 0, 1.42, 0))
+local AutoHuntEventButton = CreateAnimatedButton("Complete Hunt Event", UDim2.new(0.5, 0, 1.56, 0))
+local RedeemCodesButton = CreateAnimatedButton("Redeem all codes", UDim2.new(0.5, 0, 1.70, 0))
 ------Button and Other------
 
 local function ToggleButtonState(button, newState)
@@ -1516,6 +1518,10 @@ end)
 
 AutoAcceptArenaButton.MouseButton1Click:Connect(function()
     ToggleButtonState(AutoAcceptArenaButton, not AutoAcceptArenaButton.Text:find("ON"))
+end)
+
+AutoSellButton.MouseButton1Click:Connect(function()
+    ToggleButtonState(AutoSellButton, not AutoSellButton.Text:find("ON"))
 end)
 
 local function AutoSwiningKatana()
@@ -1621,9 +1627,10 @@ local function OpenAllIsland()
     for _, position in ipairs(islandPositions) do
         local character = player.Character
         if character then
-            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-            local goal = {}
-            goal.Position = position
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                humanoidRootPart.CFrame = CFrame.new(position)
+            end
         end
         wait(0.5)
     end
@@ -1692,6 +1699,78 @@ local function AutoUpgrateShuriken()
     end
 end
 
+local function Sell()
+    while true do
+        local sellAreaCircles = game.Workspace:FindFirstChild("sellAreaCircles")
+        if sellAreaCircles then
+            local circleInner = sellAreaCircles:GetChildren()[20] and sellAreaCircles:GetChildren()[20].circleInner
+            if circleInner then
+                local player = game.Players.LocalPlayer
+                local plrHead = player.Character and player.Character:FindFirstChild("Head")
+                if plrHead then
+                    for _, descendant in ipairs(circleInner:GetDescendants()) do
+                        if descendant:IsA("TouchTransmitter") then
+                            firetouchinterest(plrHead, descendant.Parent, 0)
+                        end
+                    end
+                else
+                    warn("Player head not found")
+                end
+            else
+                warn("circleInner not found in sellAreaCircles")
+            end
+        else
+            warn("sellAreaCircles folder not found")
+        end
+        wait(2)
+    end
+end
+
+local function AutoHoop()
+        local chestFolders = {
+            game.Workspace.goldenChest,
+            game.Workspace.eternalChest,
+            game.Workspace.enchantedChest,
+            game.Workspace.evilKarmaChest,
+            game.Workspace.goldenZenChest,
+            game.Workspace.legendsChest,
+            game.Workspace.lightKarmaChest,
+            game.Workspace.magmaChest,
+            game.Workspace.midnightShadowChest,
+            game.Workspace.saharaChest,
+            game.Workspace.thunderChest,
+            game.Workspace.soulFusionChest,
+            game.Workspace.skystormMastersChest,
+            game.Workspace.wonderChest,
+            game.Workspace.ultraNinjitsuChest
+        }
+    
+        for _, folder in ipairs(chestFolders) do
+            if folder then
+                local circleInner = folder:FindFirstChild("circleInner")
+                if circleInner then
+                    local player = game.Players.LocalPlayer
+                    local plrHead = player.Character and player.Character:FindFirstChild("Head")
+                    if plrHead then
+                        for _, descendant in ipairs(circleInner:GetDescendants()) do
+                            if descendant:IsA("TouchTransmitter") then
+                                firetouchinterest(plrHead, descendant.Parent, 0)
+                            end
+                        end
+                    else
+                        warn("Player head not found")
+                    end
+                else
+                    warn("circleInner not found in " .. folder.Name)
+                end
+                wait(0.6)
+            else
+                warn("Folder not found")
+            end
+        end
+    end
+    
+
 local function ShowMenu()
     local startProperties = {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 1}
     menuFrame.Size = startProperties.Size
@@ -1717,3 +1796,5 @@ AutoUnlockIslandButton.MouseButton1Click:Connect(OpenAllIsland)
 AutoHuntEventButton.MouseButton1Click:Connect(GetHuntEvent)
 RedeemCodesButton.MouseButton1Click:Connect(RedeemAllCode)
 AutoUpgrateSkillsButton.MouseButton1Click:Connect(AutoUpgrateSkill)
+AutoSellButton.MouseButton1Click:Connect(Sell)
+AutoHoopButton.MouseButton1Click:Connect(AutoHoop)
