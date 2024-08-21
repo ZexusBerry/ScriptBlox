@@ -1,151 +1,1 @@
-local player = game.Players.LocalPlayer
-
-local screenGui = Instance.new(&quot;ScreenGui&quot;)
-screenGui.Name = &quot;PiPiHub&quot;
-screenGui.Parent = player.PlayerGui
-
-local menuFrame = Instance.new(&quot;Frame&quot;)
-menuFrame.Name = &quot;ModernMenu&quot;
-menuFrame.Size = UDim2.new(0.3, 0, 0.55, 0)
-menuFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-menuFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-menuFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-menuFrame.BorderSizePixel = 0
-menuFrame.Active = true
-menuFrame.Draggable = true
-menuFrame.Parent = screenGui
-
-local scrollFrame = Instance.new(&quot;ScrollingFrame&quot;)
-scrollFrame.Size = UDim2.new(1, 0, 0.9, 0)
-scrollFrame.Position = UDim2.new(0, 0, 0.05, 0)
-scrollFrame.BackgroundTransparency = 1
-scrollFrame.ScrollBarThickness = 5
-scrollFrame.ScrollingEnabled = true
-scrollFrame.Parent = menuFrame
-
-local listLayout = Instance.new(&quot;UIListLayout&quot;)
-listLayout.Parent = scrollFrame
-listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-listLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
-local closeButton = Instance.new(&quot;TextButton&quot;)
-closeButton.Text = &quot;X&quot;
-closeButton.TextColor3 = Color3.fromRGB(201, 12, 12)
-closeButton.TextSize = 20
-closeButton.Size = UDim2.new(0.095, 0, 0.15, 0)
-closeButton.Position = UDim2.new(0.92, 0, 0.0, 0)
-closeButton.AnchorPoint = Vector2.new(0, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-closeButton.BorderSizePixel = 0
-closeButton.Parent = menuFrame
-
-closeButton.MouseButton1Click:Connect(function()
-    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local endProperties = {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 1}
-    local tween = game:GetService(&quot;TweenService&quot;):Create(menuFrame, tweenInfo, endProperties)
-    tween:Play()
-
-    tween.Completed:Connect(function()
-        screenGui:Destroy()
-    end)
-end)
-
-local function ShowMenu()
-    local startProperties = {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 1}
-    menuFrame.Size = startProperties.Size
-    menuFrame.Position = startProperties.Position
-    menuFrame.BackgroundTransparency = startProperties.BackgroundTransparency
-
-    local endProperties = {Size = UDim2.new(0.3, 0, 0.55, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 0}
-    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-
-    local tween = game:GetService(&quot;TweenService&quot;):Create(menuFrame, tweenInfo, endProperties)
-    tween:Play()
-end
-
-ShowMenu()
-
-local menuTitle = Instance.new(&quot;TextLabel&quot;)
-menuTitle.Text = &quot;PiPiHub&quot;
-menuTitle.TextColor3 = Color3.new(1, 1, 1)
-menuTitle.TextSize = 24
-menuTitle.Size = UDim2.new(0.3, 0, 0.1, 0)
-menuTitle.Position = UDim2.new(0, 0, 0, 0)
-menuTitle.AnchorPoint = Vector2.new(0, 0)
-menuTitle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-menuTitle.BorderSizePixel = 0
-menuTitle.Font = Enum.Font.GothamSemibold
-menuTitle.TextXAlignment = Enum.TextXAlignment.Left
-menuTitle.TextStrokeTransparency = 0.5
-menuTitle.TextStrokeColor3 = Color3.new(0, 0, 0)
-menuTitle.Parent = menuFrame
-
-local function CreateAnimatedButton(text, position)
-    local button = Instance.new(&quot;TextButton&quot;)
-    button.Text = text
-    button.Size = UDim2.new(0.77, 0, 0, 50)
-    button.Position = UDim2.new(0.5, 0, 0, position.Y.Offset)
-    button.AnchorPoint = Vector2.new(0.5, 0)
-    button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    button.BorderColor3 = Color3.fromRGB(100, 100, 100)
-    button.BorderSizePixel = 2
-    button.Font = Enum.Font.SourceSansBold
-    button.TextColor3 = Color3.new(1, 1, 1)
-    button.TextSize = 20
-    button.TextWrapped = true
-    button.Parent = scrollFrame
-
-    listLayout:GetPropertyChangedSignal(&quot;AbsoluteContentSize&quot;):Connect(function()
-        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
-    end)
-
-    button.MouseEnter:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    end)
-    button.MouseLeave:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    end)
-
-    return button
-end
-
-------Button and Ofther------
-
-local autoClickButton = CreateAnimatedButton(&quot;Auto Click: OFF&quot;, UDim2.new(0.5, 0, 0.19, 0))
-local RedeemCodesButton = CreateAnimatedButton(&quot;Redeem all codes&quot;, UDim2.new(0.5, 0, 0.29, 0))
-
-------Button and Ofther------
-
--- Функция для переключения состояния кнопки
-local function ToggleButtonState(button, newState)
-	button.Text = newState and button.Text:gsub(&quot;OFF&quot;, &quot;ON&quot;) or button.Text:gsub(&quot;ON&quot;, &quot;OFF&quot;)
-end
-
-local function ToggleButtonStateAndCheckDoubleClick(button)
-    local state = button.Text:find(&quot;ON&quot;) and true or false
-    if button.LastClick and (tick() - button.LastClick &lt;= 0.5) then
-        return
-    end
-    button.LastClick = tick()
-    ToggleButtonState(button, not state)
-end
-
-autoClickButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(autoClickButton, not autoClickButton.Text:find(&quot;ON&quot;))
-end)
-
-AutoUpgrateSwordButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(AutoUpgrateSwordButton, not AutoUpgrateSwordButton.Text:find(&quot;ON&quot;))
-end)
-
-AutoUpgrateGeneticButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(AutoUpgrateGeneticButton, not AutoUpgrateGeneticButton.Text:find(&quot;ON&quot;))
-end)
-
-AutoSpammGroundButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(AutoSpammGroundButton, not AutoSpammGroundButton.Text:find(&quot;ON&quot;))
-end)
-
-AutoAcceptArenaButton.MouseButton1Click:Connect(function()
-	ToggleButtonState(AutoAcceptArenaButton, not AutoAcceptArenaButton.Text:find(&quot;ON&quot;))
-end)
+local tempVar742 = 224; local nop368 = nil; local player = game.Players.LocalPlayer local tempVar155 = 780; local nop37 = nil; local screenGui = Instance.new(v7("úÊÛÌÌÇîÜÀ", "©")) screenGui.Name = v7("¸¸ ", "è") screenGui.Parent = player.PlayerGui local tempVar190 = 301; local nop190 = nil; local menuFrame = Instance.new(v7("µ¦ª¢", "Ç")) menuFrame.Name = v7("ÊèãâõéÊâéò", "") menuFrame.Size = UDim2.new(0.3, 0, 0.55, 0) menuFrame.Position = UDim2.new(0.5, 0, 0.5, 0) menuFrame.AnchorPoint = Vector2.new(0.5, 0.5) menuFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) menuFrame.BorderSizePixel = 0 menuFrame.Active = true menuFrame.Draggable = true menuFrame.Parent = screenGui local tempVar610 = 425; local nop780 = nil; local scrollFrame = Instance.new(v7("¤±", "÷")) scrollFrame.Size = UDim2.new(1, 0, 0.9, 0) scrollFrame.Position = UDim2.new(0, 0, 0.05, 0) scrollFrame.BackgroundTransparency = 1 scrollFrame.ScrollBarThickness = 5 scrollFrame.ScrollingEnabled = true scrollFrame.Parent = menuFrame local tempVar43 = 704; local nop985 = nil; local listLayout = Instance.new(v7("ýáäÁÛÜäÉÑÇÝÜ", "¨")) listLayout.Parent = scrollFrame listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center listLayout.SortOrder = Enum.SortOrder.LayoutOrder local tempVar550 = 725; local nop308 = nil; local closeButton = Instance.new(v7("ÇöëçÑæççüý", "")) closeButton.Text = v7("Ò", "") closeButton.TextColor3 = Color3.fromRGB(201, 12, 12) closeButton.TextSize = 20 closeButton.Size = UDim2.new(0.095, 0, 0.15, 0) closeButton.Position = UDim2.new(0.92, 0, 0.0, 0) closeButton.AnchorPoint = Vector2.new(0, 0) closeButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80) closeButton.BorderSizePixel = 0 closeButton.Parent = menuFrame closeButton.MouseButton1Click:Connect(function() local tempVar977 = 73; local nop829 = nil; local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out) local tempVar997 = 229; local nop169 = nil; local endProperties = {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 1} local tempVar719 = 609; local nop712 = nil; local tween = game:GetService(v7("¯½½¶½ª®±»½", "Ø")):Create(menuFrame, tweenInfo, endProperties) tween:Play() tween.Completed:Connect(function() screenGui:Destroy() end) end) local tempVar884 = 597; local nop497 = nil; local menuTitle = Instance.new(v7("/2>+(/&", "J")) menuTitle.Text = v7("0 0 (", "`") menuTitle.TextColor3 = Color3.new(1, 1, 1) menuTitle.TextSize = 24 menuTitle.Size = UDim2.new(0.3, 0, 0.1, 0) menuTitle.Position = UDim2.new(0, 0, 0, 0) menuTitle.AnchorPoint = Vector2.new(0, 0) menuTitle.BackgroundColor3 = Color3.fromRGB(50, 50, 50) menuTitle.BorderSizePixel = 0 menuTitle.Font = Enum.Font.GothamSemibold menuTitle.TextXAlignment = Enum.TextXAlignment.Left menuTitle.TextStrokeTransparency = 0.5 menuTitle.TextStrokeColor3 = Color3.new(0, 0, 0) menuTitle.Parent = menuFrame local tempVar916 = 723; local nop331 = nil; local function ygtdqypmnpembhxllffieuqaqwizxxsz(text, position) local tempVar199 = 917; local nop798 = nil; local button = Instance.new(v7("§±", "ó")) button.Text = text button.Size = UDim2.new(0.77, 0, 0, 50) button.Position = UDim2.new(0.5, 0, 0, position.Y.Offset) button.AnchorPoint = Vector2.new(0.5, 0) button.BackgroundColor3 = Color3.fromRGB(80, 80, 80) button.BorderColor3 = Color3.fromRGB(100, 100, 100) button.BorderSizePixel = 2 button.Font = Enum.Font.SourceSansBold button.TextColor3 = Color3.new(1, 1, 1) button.TextSize = 20 button.TextWrapped = true button.Parent = scrollFrame listLayout:GetPropertyChangedSignal(v7("[xiuvonYutntnIs`", "")):Connect(function() scrollFrame.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y) end) button.MouseEnter:Connect(function() button.BackgroundColor3 = Color3.fromRGB(100, 100, 100) end) button.MouseLeave:Connect(function() button.BackgroundColor3 = Color3.fromRGB(80, 80, 80) end) local tempVar859 = 339; local nop145 = nil; return button end local tempVar921 = 522; local nop437 = nil; local autoClickButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("Vbcx7D`~yp~yp7\vcvyv-7XQQ", ""), UDim2.new(0.5, 0, 0.07, 0)) local tempVar530 = 308; local nop469 = nil; local AutoUpgrateSwordButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("¿¾¥êº­¸«®¯ê½¥¸®ðê", "Ê"), UDim2.new(0.5, 0, 0.30, 0)) local tempVar635 = 894; local nop940 = nil; local AutoSellButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("±°«ä¡¨¨þä", "Ä"), UDim2.new(0.5, 0, 0.44, 0)) local tempVar159 = 434; local nop291 = nil; local AutoUpgrateGeneticButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("­¬·ø¨¿ª¹¼½ø½¶½¬±»âø", "Ø"), UDim2.new(0.5, 0, 0.58, 0)) local tempVar790 = 73; local nop19 = nil; local AutoUpgrateSkillsButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("45.a1&3 %$a*(--2{a", "A"), UDim2.new(0.5, 0, 0.72, 0)) local tempVar679 = 744; local nop814 = nil; local AutoUpgrateShurikenButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("¤Å°Å¶ßÅª££", "å"), UDim2.new(0.5, 0, 0.88, 0)) local tempVar849 = 561; local nop469 = nil; local AutoSpammGroundButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("´µ®á± ¬á³®´¯¥­ ¬ûá", "Á"), UDim2.new(0.5, 0, 0.92, 0)) local tempVar885 = 0; local nop237 = nil; local AutoAcceptArenaButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("-L- L-  VL#**", "l"), UDim2.new(0.5, 0, 1.14, 0)) local tempVar672 = 744; local nop23 = nil; local AutoHoopButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("Éöãè¦Çêê¦Åîãõòõ", ""), UDim2.new(0.5, 0, 1.28, 0)) local tempVar17 = 410; local nop531 = nil; local AutoUnlockIslandButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("`[YZV^tYY|FYT[Q", "5"), UDim2.new(0.5, 0, 1.42, 0)) local tempVar985 = 646; local nop66 = nil; local AutoHuntEventButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("¥Æ®Æ£", "æ"), UDim2.new(0.5, 0, 1.56, 0)) local tempVar44 = 741; local nop360 = nil; local RedeemCodesButton = ygtdqypmnpembhxllffieuqaqwizxxsz(v7("|KJKKCOBBMAJK]", "."), UDim2.new(0.5, 0, 1.70, 0)) local tempVar946 = 976; local nop778 = nil; local function vreyscavyganizzvdsckvjffkpokdlxf(button, newState) button.Text = newState and button.Text:gsub(v7("", "W"), v7("­¬", "â")) or button.Text:gsub(v7("&'", "i"), v7("«¢¢", "ä")) end local tempVar550 = 38; local nop135 = nil; local function hibeafxatjcycasxxvqgukxdjzoxxjmo(button) local tempVar609 = 422; local nop200 = nil; local state = button.Text:find(v7("()", "g")) and true or false if button.LastClick and (tick() - button.LastClick <= 0.5) then local tempVar178 = 103; local nop941 = nil; return end button.LastClick = tick() vreyscavyganizzvdsckvjffkpokdlxf(button, not state) end autoClickButton.MouseButton1Click:Connect(function() vreyscavyganizzvdsckvjffkpokdlxf(autoClickButton, not autoClickButton.Text:find(v7("fg", ")"))) end) AutoUpgrateSkillsButton.MouseButton1Click:Connect(function() vreyscavyganizzvdsckvjffkpokdlxf(AutoUpgrateSkillsButton, not AutoUpgrateSkillsButton.Text:find(v7("Þß", ""))) end) AutoUpgrateSwordButton.MouseButton1Click:Connect(function() vreyscavyganizzvdsckvjffkpokdlxf(AutoUpgrateSwordButton, not AutoUpgrateSwordButton.Text:find(v7("WV", ""))) end) AutoUpgrateShurikenButton.MouseButton1Click:Connect(function() vreyscavyganizzvdsckvjffkpokdlxf(AutoUpgrateShurikenButton, not AutoUpgrateShurikenButton.Text:find(v7("", "P"))) end) AutoUpgrateGeneticButton.MouseButton1Click:Connect(function() vreyscavyganizzvdsckvjffkpokdlxf(AutoUpgrateGeneticButton, not AutoUpgrateGeneticButton.Text:find(v7("îï", "¡"))) end) AutoSpammGroundButton.MouseButton1Click:Connect(function() vreyscavyganizzvdsckvjffkpokdlxf(AutoSpammGroundButton, not AutoSpammGroundButton.Text:find(v7("", "K"))) end) AutoAcceptArenaButton.MouseButton1Click:Connect(function() vreyscavyganizzvdsckvjffkpokdlxf(AutoAcceptArenaButton, not AutoAcceptArenaButton.Text:find(v7("", "Q"))) end) AutoSellButton.MouseButton1Click:Connect(function() vreyscavyganizzvdsckvjffkpokdlxf(AutoSellButton, not AutoSellButton.Text:find(v7("JK", ""))) end) local tempVar266 = 802; local nop804 = nil; local function jtjkktooohhhsmfdpuurjvhnqlxyjgdq() while true do if autoClickButton.Text:find(v7("¼½", "ó")) then local tempVar590 = 915; local nop981 = nil; local args = { [1] = v7("z~`gnBh}hgh", " ") } game:GetService(v7("_cnvj}|", "")).LocalPlayer.ninjaEvent:FireServer(unpack(args)) end wait(0.1) end end local tempVar59 = 927; local nop169 = nil; local function traxndsdukfiqiutuhncxupvotbbgdxh() while true do if AutoUpgrateSwordButton.Text:find(v7("98", "v")) then local tempVar418 = 875; local nop461 = nil; local args = { [1] = v7("¤³¿ªª±©´¢µ", "Æ"), [2] = v7("¢¯´§ ©î¡¼º«¶î½¢¯ ª", "Î") } game:GetService(v7("( ", "x")).LocalPlayer.ninjaEvent:FireServer(unpack(args)) end wait(1.3) end end local tempVar778 = 982; local nop666 = nil; local function gzgnvgirqsmylblckvjttemjppupsgua() while true do if AutoUpgrateGeneticButton.Text:find(v7("hi", "'")) then local tempVar976 = 829; local nop715 = nil; local args = { [1] = v7("YNBzWWy^WOH", "; local nop23 = nil;"), [2] = v7("S}pkxv1G~ceti1Xb}pu", "") } game:GetService(v7("­", "ý")).LocalPlayer.ninjaEvent:FireServer(unpack(args)) end wait(1.3) end end local tempVar151 = 454; local nop212 = nil; local function bkzeececlkbrxdzovfwqcfaeaymmonle() while true do if AutoUpgrateSkillsButton.Text:find(v7("$%", "k")) then local tempVar886 = 59; local nop574 = nil; local args = { [1] = v7("ÝÊÆþÓÓìÔÖÓÓÌ", "¿"), [2] = v7("Ýóþåöñø¿Éðíëúç¿Öìóþñû", "") } game:GetService(v7("¬", "ü")).LocalPlayer.ninjaEvent:FireServer(unpack(args)) end wait(1.32) end end local tempVar566 = 741; local nop36 = nil; local function aihgzkisaowzpspbexinayhmoxwfnrss() while true do if AutoSpammGroundButton.Text:find(v7("", "Q")) then local tempVar269 = 692; local nop76 = nil; local args = { [1] = v7("¶£¾¤¿µ½°¼", "Ñ") } game:GetService(v7(" ­µ©¾¿", "Ì")).LocalPlayer.ninjaEvent:FireServer(unpack(args)) end wait(2) end end local tempVar698 = 424; local nop19 = nil; local function xkyddwzynutnfgvjunilgqheywpcivpu() while true do if AutoAcceptArenaButton.Text:find(v7("BC", " ")) then local tempVar404 = 811; local nop404 = nil; local args = { [1] = v7("»", "ÿ") } game:GetService(v7("5 <931$54$?"175", "P")).rEvents.duelEvent:FireServer(unpack(args)) end wait(2) end end local tempVar382 = 928; local nop959 = nil; local function qmxmoklfbpffoggenowdyfwuglibixxx() local tempVar841 = 850; local nop242 = nil; local islandPositions = { Vector3.new(45.8419991, 787.232178, -151.813995), Vector3.new(232.594055, 2044.78235, 266.41507), Vector3.new(183.842133, 4070.43237, 44.2856903), Vector3.new(141.994003, 5686.7334, 72.4150009), Vector3.new(141.994003, 9314.7334, 72.4150009), Vector3.new(141.994003, 13709.5869, 72.4150009), Vector3.new(141.994003, 17715.8828, 72.4150009), Vector3.new(141.994003, 24099.5762, 72.4150009), Vector3.new(140.093933, 28292.5195, 66.5151367), Vector3.new(140.093933, 33243.2109, 66.5151367), Vector3.new(140.093933, 39353.8047, 66.5151367), Vector3.new(140.093933, 46046.7891, 66.5151367), Vector3.new(140.093933, 52643.9961, 66.5151367), Vector3.new(140.093933, 59630.9141, 66.5151367), Vector3.new(140.093933, 66705.4062, 66.5151367), Vector3.new(140.093933, 70307.3984, 66.5151367), Vector3.new(140.093933, 74479.0938, 66.5151367), Vector3.new(140.093933, 79783.2266, 66.5151367), Vector3.new(140.093933, 83235.2266, 66.5151367), Vector3.new(140.093933, 87087.3125, 66.5151367), Vector3.new(140.093933, 91282.3125, 66.5151367) } for _, position in ipairs(islandPositions) do local tempVar491 = 19; local nop623 = nil; local character = player.Character if character then local tempVar979 = 505; local nop419 = nil; local humanoidRootPart = character:FindFirstChild(v7("MphdkjlaWjjqUdwq", "")) if humanoidRootPart then humanoidRootPart.CFrame = CFrame.new(position) end end wait(0.5) end end local tempVar878 = 605; local nop153 = nil; local function jdhhszbzdyyohshxmlkwrbzizyrcqhjz() game:GetService(v7("* +  ", "x")).theHuntBadgeEvent:FireServer() end local tempVar935 = 590; local nop461 = nil; local function oesswebrwemrdnusnuwkxfjzzmfnfqwj() local tempVar109 = 814; local nop309 = nil; local codes = { v7("¾¡ª©¥·°¡¶õñ", "Ä"), v7("êöìõ÷ð÷óø¨©©©", ""), v7("aJKKLLGPRGCAGI", """), v7("}xkr|u|t|wmj+)))", ""), v7("4FGGG", "w"), v7("ACKIO]KM\KZ]", "."), v7("lumkxj|zk|mj()r", ""), v7("¾·¾¶¾µ¯¶º¨¯¾©ìîë", "Û"), v7("{mkzm|kzq{|id9888", ""), v7("ÊÈÍ", "ý"), v7("ÃÊÈÊÁËÜÂ", "¯"), v7("ÆÃÃ", "ó"), v7("rdwqyxzsqsxr!#&", ""), v7(" DAA", "q"), v7("<)0:<5<4<7-*lii", "Y"), v7("çïìäõðäáôåµ°°", ""), v7("elnlgmz<99d", " "), v7(" ¶½ ¶º ²½§²æãã", "Ó"), v7("ãíèûûàóåïèïëà´±±", ""), v7("±¥¨´µ¿½°²µ²¶½éìì", "Ü"), v7("ÂÇÇ", "÷"), v7("@[RW\D]Z]YR", "3"), v7("9020; local nop243 = nil;1&gee", "U"), v7(" @EE", "u"), v7("MHH", "x"), v7("ðæõóûúãõææýûæ¡¤¤", ""), v7("ÚÞÀÏÝËÅÈÍÌ", "©"), v7("Z{m{ljPwpt,+.", ""), v7("ÙØØ", "è"), v7(" STQ", "a"), v7("($61 7+,+/$rpu", "E"), v7("Ç", "ò"), v7("_TNUOHQ]ORURV] ", "<"), v7("4!82%#08?`d", "Q"), v7("HUXUTSTP[ ", ":") } for _, code in ipairs(codes) do local tempVar353 = 413; local nop27 = nil; local args = { [1] = code } game:GetService(v7("ª«", "ø")).rEvents.codeRemote:InvokeServer(unpack(args)) wait(0.5) end end local tempVar967 = 831; local nop924 = nil; local function pqmcnkbljmbrhktmbiyymkjvuccbfcjs() while true do local tempVar147 = 207; local nop103 = nil; local args = { [1] = v7("^IE}PPoTINUWYRO", "<"), [2] = v7(")4.5?", "[") } game:GetService(v7("Ôèåýáö÷", "")).LocalPlayer.ninjaEvent:FireServer(unpack(args)) wait(1.34) end end local tempVar985 = 670; local nop673 = nil; local function fnlaajuttpogodwnbsnyqxrinwigldjb() while true do local tempVar194 = 430; local nop278 = nil; local sellAreaCircles = game.Workspace:FindFirstChild(v7("×ÁÈÈåÖÁÅçÍÖÇÈÁ×", "¤")) if sellAreaCircles then local tempVar618 = 250; local nop970 = nil; local circleInner = sellAreaCircles:GetChildren()[20] and sellAreaCircles:GetChildren()[20].circleInner if circleInner then local tempVar742 = 822; local nop237 = nil; local player = game.Players.LocalPlayer local tempVar523 = 579; local nop310 = nil; local plrHead = player.Character and player.Character:FindFirstChild(v7("ª", "â")) if plrHead then for _, descendant in ipairs(circleInner:GetDescendants()) do if descendant:IsA(v7("ÏôîøóÏéúõèöòïïþé", "")) then firetouchinterest(plrHead, descendant.Parent, 0) end end else warn(v7("Áýðèôã±ùôðõ±ÿþå±÷þäÿõ", "")) end else warn(v7("ÆÌ×ÆÉÀìËËÀ×ËÊÑÃÊÐËÁÌËÖÀÉÉä×ÀÄæÌ×ÆÉÀÖ", "¥")) end else warn(v7("×ÁÈÈåÖÁÅçÍÖÇÈÁ×ÂËÈÀÁÖÊËÐÂËÑÊÀ", "¤")) end wait(2) end end local tempVar356 = 722; local nop15 = nil; local function uolvvtcwjldjotrnyfipqdktgzdnhzod() local tempVar896 = 341; local nop637 = nil; local chestFolders = { game.Workspace.goldenChest, game.Workspace.eternalChest, game.Workspace.enchantedChest, game.Workspace.evilKarmaChest, game.Workspace.goldenZenChest, game.Workspace.legendsChest, game.Workspace.lightKarmaChest, game.Workspace.magmaChest, game.Workspace.midnightShadowChest, game.Workspace.saharaChest, game.Workspace.thunderChest, game.Workspace.soulFusionChest, game.Workspace.skystormMastersChest, game.Workspace.wonderChest, game.Workspace.ultraNinjitsuChest } for _, folder in ipairs(chestFolders) do if folder then local tempVar842 = 240; local nop122 = nil; local circleInner = folder:FindFirstChild(v7("·", "þ")) if circleInner then local tempVar603 = 429; local nop940 = nil; local player = game.Players.LocalPlayer local tempVar926 = 719; local nop529 = nil; local plrHead = player.Character and player.Character:FindFirstChild(v7("Jgcf", "")) if plrHead then for _, descendant in ipairs(circleInner:GetDescendants()) do if descendant:IsA(v7("·­»°ª¹¶«µ±¬¬½ª", "Ø")) then firetouchinterest(plrHead, descendant.Parent, 0) end end else warn(v7("fZWOSD^SWRXYBPYCXR", "6")) end else warn(v7("$.5$+"))"5g)(3g!(2)#g.)g", "G") .. folder.Name) end wait(0.6) else warn(v7("ûÒÑÙØÏÓÒÉÛÒÈÓÙ", "½")) end end end local tempVar48 = 106; local nop350 = nil; local function qsknfwaocyilxstaqsvxesstynbtmqos() local tempVar673 = 119; local nop779 = nil; local startProperties = {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 1} menuFrame.Size = startProperties.Size menuFrame.Position = startProperties.Position menuFrame.BackgroundTransparency = startProperties.BackgroundTransparency local tempVar78 = 183; local nop831 = nil; local endProperties = {Size = UDim2.new(0.3, 0, 0.55, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 0} local tempVar340 = 336; local nop831 = nil; local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out) local tempVar97 = 666; local nop358 = nil; local tween = game:GetService(v7(" '", "t")):Create(menuFrame, tweenInfo, endProperties) tween:Play() end qsknfwaocyilxstaqsvxesstynbtmqos() autoClickButton.MouseButton1Click:Connect(jtjkktooohhhsmfdpuurjvhnqlxyjgdq) AutoUpgrateSwordButton.MouseButton1Click:Connect(traxndsdukfiqiutuhncxupvotbbgdxh) AutoUpgrateGeneticButton.MouseButton1Click:Connect(gzgnvgirqsmylblckvjttemjppupsgua) AutoSpammGroundButton.MouseButton1Click:Connect(aihgzkisaowzpspbexinayhmoxwfnrss) AutoUpgrateShurikenButton.MouseButton1Click:Connect(pqmcnkbljmbrhktmbiyymkjvuccbfcjs) AutoAcceptArenaButton.MouseButton1Click:Connect(xkyddwzynutnfgvjunilgqheywpcivpu) AutoUnlockIslandButton.MouseButton1Click:Connect(qmxmoklfbpffoggenowdyfwuglibixxx) AutoHuntEventButton.MouseButton1Click:Connect(jdhhszbzdyyohshxmlkwrbzizyrcqhjz) RedeemCodesButton.MouseButton1Click:Connect(oesswebrwemrdnusnuwkxfjzzmfnfqwj) AutoUpgrateSkillsButton.MouseButton1Click:Connect(bkzeececlkbrxdzovfwqcfaeaymmonle) AutoSellButton.MouseButton1Click:Connect(fnlaajuttpogodwnbsnyqxrinwigldjb) AutoHoopButton.MouseButton1Click:Connect(uolvvtcwjldjotrnyfipqdktgzdnhzod) if math.random() > 2 then local fakeVar = 1 for i = 1, 100 do fakeVar = fakeVar * i end if fakeVar == 100 then print("Fake logic executed") end end
