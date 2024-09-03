@@ -1,4 +1,3 @@
-    if game.Players.LocalPlayer.leaderstats.Glove.Value == "ZZZZZZZ" then
     for i = 1, 10 do
     game:GetService("ReplicatedStorage").ZZZZZZZSleep:FireServer()
     
