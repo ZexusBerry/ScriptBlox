@@ -1,1 +1,11 @@
-local a1=string.char;local a2=string.byte;local a3=string.sub;local a4=bit32 or bit;local a5=a4.bxor;local a6=table.concat;local a7=table.insert; local function a8(a9,aa) local ab={}; for ac=1,#a9 do a7(ab,a1(a5(a2(a3(a9,ac,ac)),a2(a3(aa,1+(ac-1)%#aa,1+(ac-1)%#aa+1))%256))); end return a6(ab); end ewybkcpsivkocxsm uxvwcuhtorcsrbom bxuauxxiodygzqxc() ajdvhwdmklvoglqs(a8("\3\8\50\23\13\17\6\27\61\23\28\1\22\60\20\9\82\8\5\57\17\27\3\28\36\15\7\24\23\4\61\12\26", "mySecretKey")) maplscsikzjmdudh bxuauxxiodygzqxc()
+    if game.Players.LocalPlayer.leaderstats.Glove.Value == "ZZZZZZZ" then
+    for i = 1, 10 do
+    game:GetService("ReplicatedStorage").ZZZZZZZSleep:FireServer()
+    
+    local args = {
+        [1] = "LightBroken"
+    }
+    
+    game:GetService("ReplicatedStorage").nightmare:FireServer(unpack(args))
+    task.wait(0.10)
+    end
