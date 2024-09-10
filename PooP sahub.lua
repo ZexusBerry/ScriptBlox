@@ -1,7 +1,4 @@
     local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
-    if not OrionLib then
-        warn("Failed to load OrionLib.")
-    end
     
     
     OrionLib:MakeNotification({
@@ -62,11 +59,7 @@
             game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool"):Activate() 
         end
     end
-    
-    fireclickdetector(game.Workspace.Gate1Lever)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(569.70459, 5.96265125, 291.791595, -0.998774111, 5.41272662e-08, -0.0495008193, 5.83387134e-08, 1, -8.36335374e-08, 0.0495008193, -8.64188223e-08, -0.998774111)
-    task.wait(11)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2829.57397, -48.8373451, 823.24884, -0.00630493509, -1.14465859e-08, -0.999980152, 4.58390392e-09, 1, -1.14757155e-08, 0.999980152, -4.65616612e-09, -0.00630493509)
+
     
     MainsTab:AddButton({
         Name = "Get",
